@@ -2,8 +2,9 @@ import torch
 from .utils import unitwisenorm
 
 class AGC():
-    def __init__(self, optimizer, clip_lambda=0.02, eps=0.001):
+    def __init__(self, optimizer, layer_to_skip, clip_lambda=0.02, eps=0.001):
         '''
+        :param layer_to_skip: a list contain the layer name of stat_dict to skip
         :param optimizer: any SGD variants optimizer from torch.optim
         :param clip_lambda: clip factor ranging from 0.01 to 0.16. larger batch size should use smaller clip facotr.
             for instance, batch size = 1024 -> clip_lambda = 0.01
@@ -12,11 +13,16 @@ class AGC():
         self.optimizer = optimizer
         self.clip_lambda = clip_lambda
         self.eps = eps
+        self.layer_to_skip = layer_to_skip
 
     @torch.no_grad()
     def step(self):
         for group in self.optimizer.param_groups:
             for para in group['params']:
+                # if the para group is included in layer_to_skip, just skip
+                if para in self.layer_to_skip:
+                    continue
+
                 # if no grad, just skip
                 if para.grad is None:
                     continue
