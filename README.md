@@ -1,6 +1,6 @@
 # Adaptive Gradient Clipping
 
-Adaptive gradient clipping is first introduced in the NFNets. The reason behind agc is to improve the weakness of gradient 
+Adaptive gradient clipping is first introduced in the [NFNets](https://arxiv.org/pdf/2102.06171.pdf). The reason behind agc is to improve the weakness of gradient 
 clipping which takes a static gradient threshold to clip. But most of the cases this threshold is sensitive to different setting 
 of the hyperparameter and the parameter itself. agc allows the glip threshold to change according to the norm ratio between 
 parameter and gradient. This can be treated as a relaxation of gradient clip. 
