@@ -5,8 +5,12 @@ clipping which takes a static gradient threshold to clip. But most of the cases 
 of the hyperparameter and the parameter itself. agc allows the glip threshold to change according to the norm ratio between 
 parameter and gradient. This can be treated as a relaxation of gradient clip. 
 
-## Story and Theory behind the scence
-ToDo
+## Brief theory explained behind the scene
+When using gradient descent optimization algo to train a neural network, the training process will be expected to be unstable 
+when ratio between parameter change and parameter are large. So, we can consider to use the ratio of gradient norm to parameter norm 
+to measure whether the update will be unstable or not for specific layer of the network. Also the ratio can also act as a factor 
+to contorl how the update size should be. If the ratio is too large, the clipping effect will be stronger to stablize the 
+gradient update.
 
 ## How To Use
     # to use this repo, just clone the repo in your own project/repo and import as below. the import path may be changed due to your 
@@ -22,5 +26,5 @@ ToDo
 
     # use the agc optimizer in your normal training script as a normal optimizer in torch.optim
 
-##To-Do
+## To-Do
 - [x] agc wrapper implementation
