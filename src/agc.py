@@ -2,7 +2,7 @@ import torch
 from .utils import unitwisenorm
 
 class AGC():
-    def __init__(self, optimizer, layer_to_skip, clip_lambda=0.02, eps=0.001):
+    def __init__(self, optimizer, layer_to_skip=None, clip_lambda=0.02, eps=0.001):
         '''
         :param layer_to_skip: a list contain the layer name of stat_dict to skip
         :param optimizer: any SGD variants optimizer from torch.optim
@@ -20,8 +20,9 @@ class AGC():
         for group in self.optimizer.param_groups:
             for para in group['params']:
                 # if the para group is included in layer_to_skip, just skip
-                if para in self.layer_to_skip:
-                    continue
+                if self.layer_to_skip is not None:
+                    if para in self.layer_to_skip:
+                        continue
 
                 # if no grad, just skip
                 if para.grad is None:
@@ -34,7 +35,7 @@ class AGC():
 
                 para.grad.detach().data.copy_(torch.where(trigger, clip_grad, para.grad))
 
-        self.optimizer.step()
+        return self.optimizer.step()
 
     def zero_grad(self):
         self.optimizer.zero_grad()
