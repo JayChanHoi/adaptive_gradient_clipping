@@ -86,7 +86,7 @@ def train(model_name='v0_1'):
         model.cuda()
         model = torch.nn.DataParallel(model)
 
-    optimizer = AGC(torch.optim.Adam(model.parameters(), lr=0.0001), clip_lambda=0.08)
+    optimizer = AGC(torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.0001), clip_lambda=0.08)
     loss_func = torch.nn.CrossEntropyLoss()
     model.train()
 
