@@ -99,6 +99,8 @@ def train(model_name='v0_3_agc'):
 
     for iter in count():
         epoch_loss = []
+        train_num_correct_pred = 0
+        train_num_pred = 0
         for batch_image, batch_label in tqdm(train_data_generator):
             if torch.cuda.is_available():
                 batch_image = batch_image.to('cuda')
@@ -106,6 +108,12 @@ def train(model_name='v0_3_agc'):
 
             output = model(batch_image)
             loss = loss_func(output, batch_label)
+
+            pred = output.argmax(dim=1)
+            correct_pred = (pred == batch_label).sum(dim=0)
+
+            train_num_correct_pred += correct_pred
+            train_num_pred += pred.shape[0]
 
             optimizer.zero_grad()
             loss.backward()
@@ -115,6 +123,7 @@ def train(model_name='v0_3_agc'):
         print('---------------------------------train iter :{}------------------------------'.format(iter + 1))
         print('loss : {}'.format(sum(epoch_loss)/len(epoch_loss)))
         writer.add_scalars('loss', {'train': sum(epoch_loss)/len(epoch_loss)}, global_step=iter + 1)
+        writer.add_scalars('accuracy', {'train': train_num_correct_pred/train_num_pred}, global_step=iter + 1)
 
         with torch.no_grad():
             eval_loss = []
@@ -139,7 +148,7 @@ def train(model_name='v0_3_agc'):
             print('accuracy : {}'.format(num_correct_pred / num_pred))
 
             writer.add_scalars('loss', {'test': sum(eval_loss) / len(eval_loss)}, global_step=iter + 1)
-            writer.add_scalar('accuracy', num_correct_pred / num_pred, global_step=iter + 1)
+            writer.add_scalars('accuracy', {'test': num_correct_pred / num_pred}, global_step=iter + 1)
 
         if iter + 1 == 50:
             break
