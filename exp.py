@@ -62,7 +62,7 @@ class ENClassifier(torch.nn.Module):
 
         return x
 
-def train(model_name='v0_1'):
+def train(model_name='v0_3_agc'):
     if os.path.isdir('tensorboard/{}'.format(model_name)):
         shutil.rmtree('tensorboard/{}'.format(model_name))
         os.makedirs('tensorboard/{}'.format(model_name))
@@ -70,23 +70,29 @@ def train(model_name='v0_1'):
         os.makedirs('tensorboard/{}'.format(model_name))
 
     writer = SummaryWriter('tensorboard/{}'.format(model_name))
-    transform = torchvision.transforms.Compose([
+    train_transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Resize(model_dict['0'][0]),
-        torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1))
-        # torchvision.transforms.RandomHorizontalFlip(),
+        torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
+        torchvision.transforms.RandomHorizontalFlip(),
     ])
 
-    train_dataset = torchvision.datasets.FashionMNIST(root='data', download=True, train=True, transform=transform)
-    test_dataset = torchvision.datasets.FashionMNIST(root='data', download=True, train=False, transform=transform)
-    train_data_generator = DataLoader(train_dataset, batch_size=32)
-    test_data_generator = DataLoader(test_dataset, batch_size=32)
+    test_transform = torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Resize(model_dict['0'][0]),
+        torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
+    ])
+
+    train_dataset = torchvision.datasets.FashionMNIST(root='data', download=True, train=True, transform=train_transform)
+    test_dataset = torchvision.datasets.FashionMNIST(root='data', download=True, train=False, transform=test_transform)
+    train_data_generator = DataLoader(train_dataset, batch_size=256)
+    test_data_generator = DataLoader(test_dataset, batch_size=256)
     model = ENClassifier(model_id=0, num_classes=10)
     if torch.cuda.is_available():
         model.cuda()
         model = torch.nn.DataParallel(model)
 
-    optimizer = AGC(torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.0001), clip_lambda=0.08)
+    optimizer = AGC(torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.00001), clip_lambda=0.08)
     loss_func = torch.nn.CrossEntropyLoss()
     model.train()
 
