@@ -141,6 +141,9 @@ def train(model_name='v0_3_agc'):
             writer.add_scalars('loss', {'test': sum(eval_loss) / len(eval_loss)}, global_step=iter + 1)
             writer.add_scalar('accuracy', num_correct_pred / num_pred, global_step=iter + 1)
 
+        if iter + 1 == 50:
+            break
+
 if __name__ == '__main__':
     train()
 
