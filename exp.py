@@ -75,6 +75,7 @@ def train(model_name='v0_3_agc'):
         torchvision.transforms.Resize(model_dict['0'][0]),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
         torchvision.transforms.RandomHorizontalFlip(),
+        torchvision.transforms.RandomVerticalFlip(),
     ])
 
     test_transform = torchvision.transforms.Compose([
