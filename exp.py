@@ -69,7 +69,7 @@ def train(model_name='v0_1'):
     else:
         os.makedirs('tensorboard/{}'.format(model_name))
 
-    writer = SummaryWriter('tensorboard/{}'.format(train_config.model_name))
+    writer = SummaryWriter('tensorboard/{}'.format(model_name))
     transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Resize(model_dict['0'][0]),
