@@ -1,10 +1,13 @@
 from efficientnet_pytorch import EfficientNet
 import torchvision
+from tensorboardX import SummaryWriter
 
 from torch.utils.data import DataLoader
 from itertools import count
 
 from tqdm import tqdm
+import os
+import shutil
 
 import torch
 import torch.nn as nn
@@ -59,8 +62,14 @@ class ENClassifier(torch.nn.Module):
 
         return x
 
-def train():
+def train(model_name='v0_1'):
+    if os.path.isdir('tensorboard/{}'.format(model_name)):
+        shutil.rmtree('tensorboard/{}'.format(model_name))
+        os.makedirs('tensorboard/{}'.format(model_name))
+    else:
+        os.makedirs('tensorboard/{}'.format(model_name))
 
+    writer = SummaryWriter('tensorboard/{}'.format(train_config.model_name))
     transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Resize(model_dict['0'][0]),
@@ -75,6 +84,7 @@ def train():
     model = ENClassifier(model_id=0, num_classes=10)
     if torch.cuda.is_available():
         model.cuda()
+        model = torch.nn.DataParallel(model)
 
     optimizer = AGC(torch.optim.Adam(model.parameters(), lr=0.0001), clip_lambda=0.08)
     loss_func = torch.nn.CrossEntropyLoss()
@@ -84,8 +94,8 @@ def train():
         epoch_loss = []
         for batch_image, batch_label in tqdm(train_data_generator):
             if torch.cuda.is_available():
-                batch_image = batch_image.cuda()
-                batch_label = batch_label.cuda()
+                batch_image = batch_image.to('cuda')
+                batch_label = batch_label.to('cuda')
 
             output = model(batch_image)
             loss = loss_func(output, batch_label)
@@ -97,6 +107,7 @@ def train():
 
         print('---------------------------------train iter :{}------------------------------'.format(iter + 1))
         print('loss : {}'.format(sum(epoch_loss)/len(epoch_loss)))
+        writer.add_scalars('loss', {'train': sum(epoch_loss)/len(epoch_loss)}, global_step=iter + 1)
 
         with torch.no_grad():
             eval_loss = []
@@ -104,8 +115,8 @@ def train():
             num_pred = 0
             for batch_image, batch_label in tqdm(test_data_generator):
                 if torch.cuda.is_available():
-                    batch_image = batch_image.cuda()
-                    batch_label = batch_label.cuda()
+                    batch_image = batch_image.to('cuda')
+                    batch_label = batch_label.to('cuda')
 
                 output = model(batch_image)
                 loss = loss_func(output, batch_label)
@@ -119,6 +130,9 @@ def train():
 
             print('eval_loss : {}'.format(sum(eval_loss) / len(eval_loss)))
             print('accuracy : {}'.format(num_correct_pred / num_pred))
+
+            writer.add_scalars('loss', {'test': sum(eval_loss) / len(eval_loss)}, global_step=iter + 1)
+            writer.add_scalar('accuracy', num_correct_pred / num_pred, global_step=iter + 1)
 
 if __name__ == '__main__':
     train()
