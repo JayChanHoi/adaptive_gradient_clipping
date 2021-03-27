@@ -36,3 +36,4 @@ gradient update.
 
 ## To-Do
 - [x] agc wrapper implementation
+- [x] experiment on fashionMinist
