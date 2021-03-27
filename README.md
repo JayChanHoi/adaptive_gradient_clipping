@@ -26,5 +26,18 @@ gradient update.
 
     # use the agc optimizer in your normal training script as a normal optimizer in torch.optim
 
+## Experiment result on FashionMinist
+### With agc
+loss
+![loss](https://github.com/JayChanHoi/adaptive_gradient_clipping/blob/main/doc/loss.svg)
+accuracy 
+![accuracy](https://github.com/JayChanHoi/adaptive_gradient_clipping/blob/main/doc/accuracy.svg)
+-------------------------------------------------------------------------------------------------
+### Without agc
+loss
+![loss](https://github.com/JayChanHoi/adaptive_gradient_clipping/blob/main/doc/loss_without_agc.svg)
+accuracy
+![accuracy](https://github.com/JayChanHoi/adaptive_gradient_clipping/blob/main/doc/accuracy_without_agc.svg)
+
 ## To-Do
 - [x] agc wrapper implementation
