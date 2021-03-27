@@ -1,5 +1,5 @@
 from efficientnet_pytorch import EfficientNet
-from nfnets.models.resnet import nf_wide_resnet50_2
+from nfn import nf_resnet50
 
 import torchvision
 from tensorboardX import SummaryWriter
@@ -91,7 +91,7 @@ def train(model_name='v0_3_agc'):
     train_data_generator = DataLoader(train_dataset, batch_size=256)
     test_data_generator = DataLoader(test_dataset, batch_size=256)
     # model = ENClassifier(model_id=0, num_classes=10)
-    model = nf_wide_resnet50_2(num_classes=10)
+    model = nf_resnet50(num_classes=10)
     if torch.cuda.is_available():
         model.cuda()
         model = torch.nn.DataParallel(model)
