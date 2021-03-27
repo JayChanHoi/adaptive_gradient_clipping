@@ -1,5 +1,5 @@
 from efficientnet_pytorch import EfficientNet
-from nfn import nf_resnet50, nf_resnet18
+from nfn import nf_resnet50, nf_resnet18, _nf_resnet, nf_0
 
 import torchvision
 from tensorboardX import SummaryWriter
@@ -64,7 +64,7 @@ class ENClassifier(torch.nn.Module):
 
         return x
 
-def train(model_name='v0_3_agc'):
+def train(model_name='v1_nf0_agc'):
     if os.path.isdir('tensorboard/{}'.format(model_name)):
         shutil.rmtree('tensorboard/{}'.format(model_name))
         os.makedirs('tensorboard/{}'.format(model_name))
@@ -88,10 +88,10 @@ def train(model_name='v0_3_agc'):
 
     train_dataset = torchvision.datasets.FashionMNIST(root='data', download=True, train=True, transform=train_transform)
     test_dataset = torchvision.datasets.FashionMNIST(root='data', download=True, train=False, transform=test_transform)
-    train_data_generator = DataLoader(train_dataset, batch_size=256)
-    test_data_generator = DataLoader(test_dataset, batch_size=256)
+    train_data_generator = DataLoader(train_dataset, batch_size=512)
+    test_data_generator = DataLoader(test_dataset, batch_size=512)
     # model = ENClassifier(model_id=0, num_classes=10)
-    model = nf_resnet18(num_classes=10, pretrained=True)
+    model = nf_0(num_classes=10)
     if torch.cuda.is_available():
         model.cuda()
         model = torch.nn.DataParallel(model)

@@ -339,3 +339,6 @@ def nf_wide_resnet101_2(pretrained: bool = False, base_conv: nn.Conv2d = ScaledS
     kwargs['width_per_group'] = 64 * 2
     return _nf_resnet('wide_nf_resnet101_2', Bottleneck, [3, 4, 23, 3],
                       pretrained, base_conv=base_conv, **kwargs)
+
+def nf_0(base_conv: nn.Conv2d = ScaledStdConv2d, **kwargs):
+    return _nf_resnet('f0', BasicBlock, [1, 2, 6, 3], False, base_conv=base_conv, **kwargs)
