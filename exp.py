@@ -64,7 +64,7 @@ class ENClassifier(torch.nn.Module):
 
         return x
 
-def train(model_name='v1_nf0_agc'):
+def train(model_name='v1_nf1_agc'):
     if os.path.isdir('tensorboard/{}'.format(model_name)):
         shutil.rmtree('tensorboard/{}'.format(model_name))
         os.makedirs('tensorboard/{}'.format(model_name))
