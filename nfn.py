@@ -141,7 +141,7 @@ class NFResNet(nn.Module):
         self.base_width = width_per_group
         self.conv1 = base_conv(3, self.inplanes, kernel_size=7, stride=2, padding=3,
                                bias=False)
-        self.relu = nn.ReLU(inplace=True)
+        self.gelu = nn.GELU()
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.layer1 = self._make_layer(
             block, 64, layers[0], base_conv=base_conv)
@@ -157,7 +157,7 @@ class NFResNet(nn.Module):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(
-                    m.weight, mode='fan_out', nonlinearity='relu')
+                    m.weight, mode='fan_out', nonlinearity='gelu')
 
         # Zero-initialize the last BN in each residual branch,
         # so that the residual branch starts with zeros, and each residual block behaves like an identity.
@@ -198,7 +198,7 @@ class NFResNet(nn.Module):
     def _forward_impl(self, x: Tensor) -> Tensor:
         # See note [TorchScript super()]
         x = self.conv1(x)
-        x = self.relu(x)
+        x = self.gelu(x)
         x = self.maxpool(x)
 
         x = self.layer1(x)
@@ -342,3 +342,6 @@ def nf_wide_resnet101_2(pretrained: bool = False, base_conv: nn.Conv2d = ScaledS
 
 def nf_0(base_conv: nn.Conv2d = ScaledStdConv2d, **kwargs):
     return _nf_resnet('f0', BasicBlock, [1, 2, 6, 3], False, base_conv=base_conv, **kwargs)
+
+def nf_1(base_conv: nn.Conv2d = ScaledStdConv2d, **kwargs):
+    return _nf_resnet('f1', BasicBlock, [2, 4, 12, 6], False, base_conv=base_conv, **kwargs)
