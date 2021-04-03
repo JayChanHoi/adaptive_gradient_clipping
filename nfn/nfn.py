@@ -64,6 +64,7 @@ class BasicBlock(nn.Module):
 
         out = GElU_scaled_gamma * self.gelu(x) * (self.beta)
         out = self.conv1(out)
+        out = GElU_scaled_gamma * self.gelu(x)
         out = self.conv2(out)
 
         if self.downsample is not None:
@@ -214,6 +215,7 @@ class NFResNet(nn.Module):
     def _forward_impl(self, x: Tensor) -> Tensor:
         # See note [TorchScript super()]
         x = self.conv1(x)
+        x = GElU_scaled_gamma * self.gelu(x)
         x = self.maxpool(x)
 
         x = self.layer1(x)
@@ -221,7 +223,6 @@ class NFResNet(nn.Module):
         x = self.layer3(x)
         x = self.layer4(x)
 
-        x = GElU_scaled_gamma * self.gelu(x)
         x = self.avgpool(x)
         x_conv_out_rep = torch.flatten(x, 1)
         x = self.dropout(x_conv_out_rep)
