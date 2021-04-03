@@ -242,7 +242,7 @@ def _nf_resnet(
     return model
 
 def nf_0(base_conv: nn.Conv2d = ScaledStdConv2d, **kwargs):
-    return _nf_resnet('f0', BasicBlock, [1, 2, 6, 3], False, base_conv=base_conv, dropout_p=0.2, **kwargs)
+    return _nf_resnet('f0', BasicBlock, [1, 2, 6, 3], False, base_conv=base_conv, dropout_p=0.1, **kwargs)
 
 def nf_1(base_conv: nn.Conv2d = ScaledStdConv2d, **kwargs):
     return _nf_resnet('f1', BasicBlock, [2, 4, 12, 6], False, base_conv=base_conv, dropout_p=0.3, **kwargs)
