@@ -27,9 +27,9 @@ def train(model_name='v1_nf1_gelu_agc'):
 
     writer = SummaryWriter('tensorboard/{}'.format(model_name))
     train_transform = torchvision.transforms.Compose([
-        torchvision.transforms.ToTensor(),
         torchvision.transforms.RandomHorizontalFlip(),
         torchvision.transforms.RandomVerticalFlip(),
+        torchvision.transforms.ToTensor(),
         torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['train_reso']),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
 
