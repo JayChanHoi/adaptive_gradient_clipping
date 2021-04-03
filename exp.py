@@ -30,6 +30,7 @@ def train(model_name='v1_nf1_gelu_agc'):
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['train_reso']),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
+        torchvision.transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
         torchvision.transforms.RandomHorizontalFlip(),
         torchvision.transforms.RandomVerticalFlip(),
     ])
@@ -38,20 +39,20 @@ def train(model_name='v1_nf1_gelu_agc'):
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['inference_reso']),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
+        torchvision.transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
     ])
 
     train_dataset = torchvision.datasets.FashionMNIST(root='data', download=True, train=True, transform=train_transform)
     test_dataset = torchvision.datasets.FashionMNIST(root='data', download=True, train=False, transform=test_transform)
     train_data_generator = DataLoader(train_dataset, batch_size=512)
     test_data_generator = DataLoader(test_dataset, batch_size=512)
-    # model = ENClassifier(model_id=0, num_classes=10)
-    model = nf_1(num_classes=10)
+    model = nf_0(num_classes=10)
     if torch.cuda.is_available():
         model.cuda()
         model = torch.nn.DataParallel(model)
 
     print(model.state_dict().keys())
-    optimizer = AGC(torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.00001), clip_lambda=0.08, layer_to_skip=['fc'])
+    optimizer = AGC(torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.00001), clip_lambda=0.01, layer_to_skip=['fc'])
     loss_func = torch.nn.CrossEntropyLoss()
     model.train()
 
