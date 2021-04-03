@@ -66,6 +66,7 @@ class BasicBlock(nn.Module):
         out = self.conv1(out)
         out = GElU_scaled_gamma * self.gelu(out)
         out = self.conv2(out)
+        out = GElU_scaled_gamma * self.gelu(out)
 
         if self.downsample is not None:
             identity = self.downsample(x)
@@ -115,6 +116,7 @@ class Bottleneck(nn.Module):
         out = GElU_scaled_gamma * self.gelu(out)
 
         out = self.conv3(out)
+        out = GElU_scaled_gamma * self.gelu(out)
 
         if self.downsample is not None:
             identity = self.downsample(x)
