@@ -1,5 +1,4 @@
-from efficientnet_pytorch import EfficientNet
-from nfn import nf_resnet50, nf_resnet18, _nf_resnet, nf_0, nf_1
+from nfn.nfn import nf_0, nf_1, NF_RESO_CONFIG
 
 import torchvision
 from tensorboardX import SummaryWriter
@@ -17,53 +16,7 @@ import torch.nn.functional as F
 
 from src.agc import AGC
 
-model_dict = {
-    # model_id : res, dropout p
-    '0': (224, 0.2),
-    '1': (240, 0.2),
-    '2': (260, 0.3),
-    '3': (300, 0.3),
-    '4': (380, 0.4),
-    '5': (456, 0.4),
-    '6': (528, 0.5),
-    '7': (600, 0.5),
-    '8': (672, 0.5)
-}
 
-class ENClassifier(torch.nn.Module):
-    def __init__(self, model_id, num_classes, advprop=True, dropout_p=0.2, temperature=1.0, from_pretrain=False):
-        super(ENClassifier, self).__init__()
-        if from_pretrain:
-            self.model = EfficientNet.from_pretrained('efficientnet-b{}'.format(model_id), advprop=advprop)
-        else:
-            self.model = EfficientNet.from_name('efficientnet-b{}'.format(model_id))
-        self.temperature = temperature
-
-        del self.model._avg_pooling
-        del self.model._dropout
-        del self.model._fc
-
-        self.global_average_pooling = nn.AdaptiveAvgPool2d((1, 1))
-        self.dropout = nn.Dropout(p=dropout_p)
-        self.class_layer = nn.Linear(self._find_channel(), num_classes)
-
-    def _find_channel(self):
-        test_input = torch.rand([1, 3, 512, 910])
-        test_output = self.model.extract_features(test_input)
-
-        return test_output.shape[1]
-
-    def __call__(self, inputs):
-        bs = inputs.size(0)
-        x = self.model.extract_features(inputs)
-
-        # Pooling and final linear layer
-        x = self.global_average_pooling(x)
-        x = x.reshape(bs, -1)
-        x = self.dropout(x)
-        x = self.class_layer(x) / self.temperature
-
-        return x
 
 def train(model_name='v1_nf1_gelu_agc'):
     if os.path.isdir('tensorboard/{}'.format(model_name)):
@@ -75,7 +28,7 @@ def train(model_name='v1_nf1_gelu_agc'):
     writer = SummaryWriter('tensorboard/{}'.format(model_name))
     train_transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
-        torchvision.transforms.Resize(model_dict['0'][0]),
+        torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['train_reso']),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
         torchvision.transforms.RandomHorizontalFlip(),
         torchvision.transforms.RandomVerticalFlip(),
@@ -83,7 +36,7 @@ def train(model_name='v1_nf1_gelu_agc'):
 
     test_transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
-        torchvision.transforms.Resize(model_dict['0'][0]),
+        torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['inference_reso']),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
     ])
 
