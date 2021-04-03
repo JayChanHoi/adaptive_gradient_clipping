@@ -32,6 +32,7 @@ def train(model_name='v1_nf1_gelu_agc'):
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['train_reso']),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
+        torchvision.transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
 
     ])
 
@@ -39,6 +40,7 @@ def train(model_name='v1_nf1_gelu_agc'):
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['inference_reso']),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
+        torchvision.transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
     ])
 
     train_dataset = torchvision.datasets.FashionMNIST(root='data', download=True, train=True, transform=train_transform)
