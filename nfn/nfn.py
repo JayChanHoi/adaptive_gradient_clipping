@@ -92,7 +92,8 @@ class BasicBlock(nn.Module):
             base_width: int = 64,
             dilation: int = 1,
             base_conv: int = ScaledStdConv2d,
-            beta: float = 1.0
+            beta: float = 1.0,
+            alpha: float = 0.2
     ) -> None:
         super(BasicBlock, self).__init__()
         width = int(planes * (base_width / 64.)) * groups
@@ -104,6 +105,7 @@ class BasicBlock(nn.Module):
         self.downsample = downsample
         self.stride = stride
         self.beta = beta
+        self.alpha = alpha
 
     def forward(self, x: Tensor) -> Tensor:
         identity = x
