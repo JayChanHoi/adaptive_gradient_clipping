@@ -81,9 +81,7 @@ class BasicBlock(nn.Module):
     # according to "Deep residual learning for image recognition"https://arxiv.org/abs/1512.03385.
     # This variant is also known as ResNet V1.5 and improves accuracy according to
     # https://ngc.nvidia.com/catalog/model-scripts/nvidia:resnet_50_v1_5_for_pytorch.
-
     expansion: int = 4
-
     def __init__(
             self,
             inplanes: int,
@@ -124,12 +122,10 @@ class BasicBlock(nn.Module):
 
         return out
 
-
 class NFResNet(nn.Module):
-
     def __init__(
             self,
-            block: Type[Union[BasicBlock, Bottleneck]],
+            block: Type[Union[BasicBlock]],
             layers: List[int],
             num_classes: int = 1000,
             zero_init_residual: bool = False,
@@ -168,7 +164,6 @@ class NFResNet(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
         self.dropout = nn.Dropout(dropout_p)
-
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
