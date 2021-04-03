@@ -49,7 +49,7 @@ class BasicBlock(nn.Module):
                 "Dilation > 1 not supported in BasicBlock")
         # Both self.conv1 and self.downsample layers downsample the input when stride != 1
         self.conv1 = conv3x3(inplanes, planes, stride, base_conv=base_conv)
-        self.gelu = nn.GELU()
+        self.relu = nn.ReLU()
         self.conv2 = conv3x3(planes, planes, base_conv=base_conv)
         self.downsample = downsample
         self.stride = stride
@@ -152,7 +152,7 @@ class NFResNet(nn.Module):
         self.base_width = width_per_group
         self.conv1 = base_conv(3, self.inplanes, kernel_size=7, stride=2, padding=3,
                                bias=False)
-        self.gelu = nn.GELU()
+        self.relu = nn.ReLU()
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.layer1 = self._make_layer(
             block, 64, layers[0], base_conv=base_conv)
@@ -169,7 +169,7 @@ class NFResNet(nn.Module):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(
-                    m.weight, mode='fan_out', nonlinearity='linear')
+                    m.weight, mode='fan_out', nonlinearity='relu')
 
         # Zero-initialize the last BN in each residual branch,
         # so that the residual branch starts with zeros, and each residual block behaves like an identity.
@@ -210,7 +210,7 @@ class NFResNet(nn.Module):
     def _forward_impl(self, x: Tensor) -> Tensor:
         # See note [TorchScript super()]
         x = self.conv1(x)
-        x = self.gelu(x)
+        x = self.relu(x)
         x = self.maxpool(x)
 
         x = self.layer1(x)
