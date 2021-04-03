@@ -28,11 +28,11 @@ def train(model_name='v1_nf1_gelu_agc'):
 
     writer = SummaryWriter('tensorboard/{}'.format(model_name))
     train_transform = torchvision.transforms.Compose([
-        torchvision.transforms.RandomHorizontalFlip(),
-        torchvision.transforms.RandomVerticalFlip(),
         torchvision.transforms.Resize(NF_RESO_CONFIG['nf_1']['train_reso']),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
+        torchvision.transforms.RandomHorizontalFlip(),
+        torchvision.transforms.RandomVerticalFlip()
         # torchvision.transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
 
     ])
