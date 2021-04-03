@@ -37,3 +37,4 @@ gradient update.
 ## To-Do
 - [x] agc wrapper implementation
 - [x] experiment on fashionMinist
+- [x] add nf_resnet series model
