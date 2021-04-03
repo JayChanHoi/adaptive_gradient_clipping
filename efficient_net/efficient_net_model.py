@@ -1,6 +1,7 @@
 from efficientnet_pytorch import EfficientNet
 
 import torch.nn as nn
+import torch
 
 model_dict = {
     # model_id : res, dropout p
