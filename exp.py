@@ -87,6 +87,7 @@ def train(model_name='v1_nf1_gelu_agc'):
             eval_loss = []
             num_correct_pred = 0
             num_pred = 0
+            model.eval()
             for batch_image, batch_label in tqdm(test_data_generator):
                 if torch.cuda.is_available():
                     batch_image = batch_image.to('cuda')
@@ -108,6 +109,7 @@ def train(model_name='v1_nf1_gelu_agc'):
             writer.add_scalars('loss', {'test': sum(eval_loss) / len(eval_loss)}, global_step=iter + 1)
             writer.add_scalars('accuracy', {'test': num_correct_pred / num_pred}, global_step=iter + 1)
 
+        model.train()
         if iter + 1 == 50:
             break
 
