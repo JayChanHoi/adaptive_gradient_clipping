@@ -180,14 +180,14 @@ class NFResNet(nn.Module):
         # This improves the model by 0.2~0.3% according to https://arxiv.org/abs/1706.02677
         if zero_init_residual:
             for m in self.modules():
-                if isinstance(m, Bottleneck):
+                if isinstance(m, BasicBlock):
                     # type: ignore[arg-type]
                     nn.init.constant_(m.bn3.weight, 0)
                 elif isinstance(m, BasicBlock):
                     # type: ignore[arg-type]
                     nn.init.constant_(m.bn2.weight, 0)
 
-    def _make_layer(self, block: Type[Union[BasicBlock, Bottleneck]], planes: int, blocks: int, alpha: float,
+    def _make_layer(self, block: Type[Union[BasicBlock]], planes: int, blocks: int, alpha: float,
                     stride: int = 1, dilate: bool = False, base_conv: nn.Conv2d = ScaledStdConv2d) -> nn.Sequential:
         downsample = None
         previous_dilation = self.dilation
@@ -237,7 +237,7 @@ class NFResNet(nn.Module):
 
 def _nf_resnet(
         arch: str,
-        block: Type[Union[BasicBlock, Bottleneck]],
+        block: Type[Union[BasicBlock]],
         layers: List[int],
         pretrained: bool,
         base_conv: nn.Conv2d,
