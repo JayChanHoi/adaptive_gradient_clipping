@@ -58,7 +58,7 @@ class BasicBlock(nn.Module):
         identity = x
 
         out = self.conv1(x)
-        out = self.gelu(out)
+        out = self.relu(out)
 
         out = self.conv2(out)
 
@@ -66,7 +66,7 @@ class BasicBlock(nn.Module):
             identity = self.downsample(x)
 
         out += identity
-        out = self.gelu(out)
+        out = self.relu(out)
 
         return out
 
