@@ -64,7 +64,7 @@ class BasicBlock(nn.Module):
 
         out = GElU_scaled_gamma * self.gelu(x) * (self.beta)
         out = self.conv1(out)
-        out = GElU_scaled_gamma * self.gelu(out) * (self.beta)
+        out = GElU_scaled_gamma * self.gelu(out)
         out = self.conv2(out)
 
         if self.downsample is not None:
