@@ -1,5 +1,5 @@
 from nfn.nfn import nf_0, nf_1, NF_RESO_CONFIG
-from models.nfnet import nfnet_f0, dm_nfnet_f0
+from models.nfnet import nfnet_f0, dm_nfnet_f0, nfnet_f1
 
 import torchvision
 from tensorboardX import SummaryWriter
@@ -48,7 +48,7 @@ def train(model_name='v1_nf1_gelu_agc'):
     test_dataset = torchvision.datasets.FashionMNIST(root='data', download=True, train=False, transform=test_transform)
     train_data_generator = DataLoader(train_dataset, batch_size=256)
     test_data_generator = DataLoader(test_dataset, batch_size=256)
-    model = nf_1(num_classes=10)
+    model = nfnet_f1(num_classes=10)
     if torch.cuda.is_available():
         model.cuda()
         model = torch.nn.DataParallel(model)
