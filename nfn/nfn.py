@@ -233,7 +233,6 @@ class NFResNet(nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         return self._forward_impl(x)
 
-
 def _nf_resnet(
         arch: str,
         block: Type[Union[BasicBlock]],
