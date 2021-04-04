@@ -1,5 +1,3 @@
-from nfn.nf_resnet_light_v1 import nf_light_v1_0, nf_light_v1_1, NF_RESO_CONFIG
-from nfn.nf_resnet_light_v2 import nf_light_v2_0
 from models.nfnet import nfnet_f0, dm_nfnet_f0, nfnet_f1
 from efficient_net.efficient_net_model import ENClassifier, model_dict
 
@@ -31,7 +29,7 @@ def train(model_name='v1_nf_resnet_light_v2_f0_agc'):
 
         torchvision.transforms.RandomHorizontalFlip(),
         torchvision.transforms.RandomVerticalFlip(),
-        torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['reso']),
+        torchvision.transforms.Resize(192),
         # torchvision.transforms.Resize(int(model_dict['0'][0])),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
@@ -39,7 +37,7 @@ def train(model_name='v1_nf_resnet_light_v2_f0_agc'):
     ])
 
     test_transform = torchvision.transforms.Compose([
-        torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['reso']),
+        torchvision.transforms.Resize(256),
         # torchvision.transforms.Resize(int(model_dict['0'][0])),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
@@ -51,7 +49,7 @@ def train(model_name='v1_nf_resnet_light_v2_f0_agc'):
     train_data_generator = DataLoader(train_dataset, batch_size=256)
     test_data_generator = DataLoader(test_dataset, batch_size=256)
     # model = nfnet_f1(num_classes=10)
-    model = nf_light_v2_0(num_classes=10)
+    model = dm_nfnet_f0(num_classes=10)
     if torch.cuda.is_available():
         model.cuda()
         model = torch.nn.DataParallel(model)
