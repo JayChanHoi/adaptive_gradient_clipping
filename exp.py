@@ -18,8 +18,6 @@ import torch.nn.functional as F
 
 from src.agc import AGC
 
-
-
 def train(model_name='v1_efficient_net_b0_agc'):
     if os.path.isdir('tensorboard/{}'.format(model_name)):
         shutil.rmtree('tensorboard/{}'.format(model_name))
@@ -56,7 +54,7 @@ def train(model_name='v1_efficient_net_b0_agc'):
         model = torch.nn.DataParallel(model)
 
     print(model.state_dict().keys())
-    optimizer = AGC(torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.00001), clip_lambda=0.04, layer_to_skip=None)
+    optimizer = AGC(torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.00001), clip_lambda=0.04, layer_to_skip=['fc'])
     loss_func = torch.nn.CrossEntropyLoss()
     model.train()
 
