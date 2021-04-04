@@ -31,8 +31,8 @@ def train(model_name='v1_efficient_net_b0_agc'):
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
         torchvision.transforms.Resize(model_dict['0']),
-        torchvision.transforms.RandomHorizontalFlip(),
-        torchvision.transforms.RandomVerticalFlip(),
+        # torchvision.transforms.RandomHorizontalFlip(),
+        # torchvision.transforms.RandomVerticalFlip(),
         # torchvision.transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
     ])
 
