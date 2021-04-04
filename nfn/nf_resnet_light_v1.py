@@ -6,13 +6,13 @@ from typing import Type, Any, Callable, Union, List, Optional
 from .nf_base import WSConv2d, ScaledStdConv2d
 
 NF_RESO_CONFIG = {
-    'nf_0': {'train_reso':192, 'inference_reso':256},
-    'nf_1': {'train_reso':224, 'inference_reso':320},
-    'nf_2': {'train_reso':256, 'inference_reso':352},
-    'nf_3': {'train_reso':320, 'inference_reso':416},
-    'nf_4': {'train_reso':384, 'inference_reso':512},
-    'nf_5': {'train_reso':416, 'inference_reso':544},
-    'nf_6': {'train_reso':448, 'inference_reso':576}
+    'nf_0': {'reso':192},
+    'nf_1': {'reso':224},
+    'nf_2': {'reso':256},
+    'nf_3': {'reso':320},
+    'nf_4': {'reso':384},
+    'nf_5': {'reso':416},
+    'nf_6': {'reso':448}
 }
 
 def conv3x3(in_planes: int, out_planes: int, stride: int = 1, groups: int = 1, dilation: int = 1, base_conv: nn.Conv2d = ScaledStdConv2d) -> nn.Conv2d:
