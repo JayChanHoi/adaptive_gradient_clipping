@@ -71,7 +71,7 @@ class BasicBlock(nn.Module):
             identity = self.downsample(x)
 
         out = out * self.alpha + identity
-        out = GElU_scaled_gamma * self.gelu(out)
+        # out = GElU_scaled_gamma * self.gelu(out)
 
         return out
 
@@ -171,6 +171,7 @@ class NFResNet(nn.Module):
         x = self.layer3(x)
         x = self.layer4(x)
 
+        x = GElU_scaled_gamma * self.gelu(x)
         x = self.avgpool(x)
         x_conv_out_rep = torch.flatten(x, 1)
         x = self.dropout(x_conv_out_rep)
