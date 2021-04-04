@@ -71,7 +71,6 @@ class BasicBlock(nn.Module):
             identity = self.downsample(x)
 
         out = out * self.alpha + identity
-        # out = GElU_scaled_gamma * self.gelu(out)
 
         return out
 
