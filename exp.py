@@ -1,4 +1,5 @@
 from nfn.nf_resnet_light import nf_0, nf_1, NF_RESO_CONFIG
+from nfn.nf_resnet_light_2 import nf_light_2_0
 from models.nfnet import nfnet_f0, dm_nfnet_f0, nfnet_f1
 from efficient_net.efficient_net_model import ENClassifier, model_dict
 
@@ -50,7 +51,7 @@ def train(model_name='v1_efficient_net_b0_agc'):
     train_data_generator = DataLoader(train_dataset, batch_size=256)
     test_data_generator = DataLoader(test_dataset, batch_size=256)
     # model = nfnet_f1(num_classes=10)
-    model = nf_0(num_classes=10)
+    model = nf_light_2_0(num_classes=10)
     if torch.cuda.is_available():
         model.cuda()
         model = torch.nn.DataParallel(model)
