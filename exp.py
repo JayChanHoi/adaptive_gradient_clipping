@@ -34,7 +34,7 @@ def train(model_name='v1_efficient_net_b0_agc'):
         # torchvision.transforms.Resize(int(model_dict['0'][0])),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
-        # torchvision.transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+        # torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
 
     test_transform = torchvision.transforms.Compose([
@@ -42,8 +42,7 @@ def train(model_name='v1_efficient_net_b0_agc'):
         # torchvision.transforms.Resize(int(model_dict['0'][0])),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
-        #
-        # torchvision.transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+        # torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
 
     train_dataset = torchvision.datasets.FashionMNIST(root='data', download=True, train=True, transform=train_transform)
@@ -51,7 +50,7 @@ def train(model_name='v1_efficient_net_b0_agc'):
     train_data_generator = DataLoader(train_dataset, batch_size=256)
     test_data_generator = DataLoader(test_dataset, batch_size=256)
     # model = nfnet_f1(num_classes=10)
-    model = dm_nfnet_f0(num_classes=10)
+    model = nf_0(num_classes=10)
     if torch.cuda.is_available():
         model.cuda()
         model = torch.nn.DataParallel(model)
