@@ -1,5 +1,6 @@
 from nfn.nfn import nf_0, nf_1, NF_RESO_CONFIG
 from models.nfnet import nfnet_f0, dm_nfnet_f0, nfnet_f1
+from efficient_net.efficient_net_model import ENClassifier
 
 import torchvision
 from tensorboardX import SummaryWriter
@@ -48,13 +49,14 @@ def train(model_name='v1_nf1_gelu_agc'):
     test_dataset = torchvision.datasets.FashionMNIST(root='data', download=True, train=False, transform=test_transform)
     train_data_generator = DataLoader(train_dataset, batch_size=256)
     test_data_generator = DataLoader(test_dataset, batch_size=256)
-    model = nfnet_f1(num_classes=10)
+    # model = nfnet_f1(num_classes=10)
+    model = ENClassifier(model_id=0, num_classes=10)
     if torch.cuda.is_available():
         model.cuda()
         model = torch.nn.DataParallel(model)
 
     print(model.state_dict().keys())
-    optimizer = AGC(torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.00001), clip_lambda=0.04, layer_to_skip=['fc'])
+    optimizer = AGC(torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.00001), clip_lambda=0.04, layer_to_skip=None)
     loss_func = torch.nn.CrossEntropyLoss()
     model.train()
 
