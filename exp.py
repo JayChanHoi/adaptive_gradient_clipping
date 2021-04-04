@@ -27,18 +27,19 @@ def train(model_name='v1_efficient_net_b0_agc'):
 
     writer = SummaryWriter('tensorboard/{}'.format(model_name))
     train_transform = torchvision.transforms.Compose([
-        # torchvision.transforms.Resize(NF_RESO_CONFIG['nf_1']['train_reso']),
+
         torchvision.transforms.RandomHorizontalFlip(),
         torchvision.transforms.RandomVerticalFlip(),
-        torchvision.transforms.Resize(int(model_dict['0'][0])),
+        torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['train_reso']),
+        # torchvision.transforms.Resize(int(model_dict['0'][0])),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
         # torchvision.transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
     ])
 
     test_transform = torchvision.transforms.Compose([
-        # torchvision.transforms.Resize(NF_RESO_CONFIG['nf_1']['train_reso']),
-        torchvision.transforms.Resize(int(model_dict['0'][0])),
+        torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['train_reso']),
+        # torchvision.transforms.Resize(int(model_dict['0'][0])),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
         #
@@ -50,7 +51,7 @@ def train(model_name='v1_efficient_net_b0_agc'):
     train_data_generator = DataLoader(train_dataset, batch_size=256)
     test_data_generator = DataLoader(test_dataset, batch_size=256)
     # model = nfnet_f1(num_classes=10)
-    model = ENClassifier(model_id=0, num_classes=10)
+    model = dm_nfnet_f0(num_classes=10)
     if torch.cuda.is_available():
         model.cuda()
         model = torch.nn.DataParallel(model)
