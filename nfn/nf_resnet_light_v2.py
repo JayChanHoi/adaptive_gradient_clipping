@@ -62,7 +62,7 @@ class BasicBlock(nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         identity = x
 
-        out = GElU_scaled_gamma * self.gelu(x) * (self.beta)
+        out = x * (self.beta)
         out = self.conv1(out)
         out = GElU_scaled_gamma * self.gelu(out)
         out = self.conv2(out)
@@ -71,6 +71,7 @@ class BasicBlock(nn.Module):
             identity = self.downsample(x)
 
         out = out * self.alpha + identity
+        out = GElU_scaled_gamma * self.gelu(out)
 
         return out
 

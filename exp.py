@@ -35,7 +35,7 @@ def train(model_name='v1_nf_resnet_light_v2_f0_agc'):
         # torchvision.transforms.Resize(int(model_dict['0'][0])),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
-        # torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+        torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
 
     test_transform = torchvision.transforms.Compose([
@@ -43,7 +43,7 @@ def train(model_name='v1_nf_resnet_light_v2_f0_agc'):
         # torchvision.transforms.Resize(int(model_dict['0'][0])),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
-        # torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+        torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
 
     train_dataset = torchvision.datasets.FashionMNIST(root='data', download=True, train=True, transform=train_transform)
