@@ -25,7 +25,6 @@ def conv1x1(in_planes: int, out_planes: int, stride: int = 1, base_conv: nn.Conv
     """1x1 convolution"""
     return base_conv(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
 
-
 class BasicBlock(nn.Module):
     expansion: int = 1
 
@@ -59,7 +58,6 @@ class BasicBlock(nn.Module):
 
         out = self.conv1(x)
         out = self.relu(out)
-
         out = self.conv2(out)
 
         if self.downsample is not None:
@@ -69,65 +67,12 @@ class BasicBlock(nn.Module):
         out = self.relu(out)
 
         return out
-
-
-class Bottleneck(nn.Module):
-    # Bottleneck in torchvision places the stride for downsampling at 3x3 convolution(self.conv2)
-    # while original implementation places the stride at the first 1x1 convolution(self.conv1)
-    # according to "Deep residual learning for image recognition"https://arxiv.org/abs/1512.03385.
-    # This variant is also known as ResNet V1.5 and improves accuracy according to
-    # https://ngc.nvidia.com/catalog/model-scripts/nvidia:resnet_50_v1_5_for_pytorch.
-
-    expansion: int = 4
-
-    def __init__(
-            self,
-            inplanes: int,
-            planes: int,
-            stride: int = 1,
-            downsample: Optional[nn.Module] = None,
-            groups: int = 1,
-            base_width: int = 64,
-            dilation: int = 1,
-            base_conv: int = ScaledStdConv2d,
-    ) -> None:
-        super(Bottleneck, self).__init__()
-        width = int(planes * (base_width / 64.)) * groups
-        # Both self.conv2 and self.downsample layers downsample the input when stride != 1
-        self.conv1 = conv1x1(inplanes, width, base_conv=base_conv)
-        self.conv2 = conv3x3(width, width, stride, groups,
-                             dilation, base_conv=base_conv)
-        self.conv3 = conv1x1(
-            width, planes * self.expansion, base_conv=base_conv)
-        self.relu = nn.ReLU(inplace=True)
-        self.downsample = downsample
-        self.stride = stride
-
-    def forward(self, x: Tensor) -> Tensor:
-        identity = x
-
-        out = self.conv1(x)
-        out = self.relu(out)
-
-        out = self.conv2(out)
-        out = self.relu(out)
-
-        out = self.conv3(out)
-
-        if self.downsample is not None:
-            identity = self.downsample(x)
-
-        out += identity
-        out = self.relu(out)
-
-        return out
-
 
 class NFResNet(nn.Module):
 
     def __init__(
             self,
-            block: Type[Union[BasicBlock, Bottleneck]],
+            block: Type[BasicBlock],
             layers: List[int],
             num_classes: int = 1000,
             zero_init_residual: bool = False,
@@ -171,19 +116,13 @@ class NFResNet(nn.Module):
                 nn.init.kaiming_normal_(
                     m.weight, mode='fan_out', nonlinearity='relu')
 
-        # Zero-initialize the last BN in each residual branch,
-        # so that the residual branch starts with zeros, and each residual block behaves like an identity.
-        # This improves the model by 0.2~0.3% according to https://arxiv.org/abs/1706.02677
         if zero_init_residual:
             for m in self.modules():
-                if isinstance(m, Bottleneck):
-                    # type: ignore[arg-type]
-                    nn.init.constant_(m.bn3.weight, 0)
-                elif isinstance(m, BasicBlock):
+                if isinstance(m, BasicBlock):
                     # type: ignore[arg-type]
                     nn.init.constant_(m.bn2.weight, 0)
 
-    def _make_layer(self, block: Type[Union[BasicBlock, Bottleneck]], planes: int, blocks: int,
+    def _make_layer(self, block: Type[BasicBlock], planes: int, blocks: int,
                     stride: int = 1, dilate: bool = False, base_conv: nn.Conv2d = ScaledStdConv2d) -> nn.Sequential:
         downsample = None
         previous_dilation = self.dilation
@@ -230,7 +169,7 @@ class NFResNet(nn.Module):
 
 def _nf_resnet(
         arch: str,
-        block: Type[Union[BasicBlock, Bottleneck]],
+        block: Type[BasicBlock],
         layers: List[int],
         pretrained: bool,
         base_conv: nn.Conv2d,
@@ -241,7 +180,22 @@ def _nf_resnet(
     return model
 
 def nf_0(base_conv: nn.Conv2d = ScaledStdConv2d, **kwargs):
-    return _nf_resnet('f0', BasicBlock, [1, 2, 6, 3], False, base_conv=base_conv, dropout_p=0.0, **kwargs)
+    return _nf_resnet('f0', BasicBlock, [1, 2, 6, 3], False, base_conv=base_conv, dropout_p=0.2, **kwargs)
 
 def nf_1(base_conv: nn.Conv2d = ScaledStdConv2d, **kwargs):
-    return _nf_resnet('f1', BasicBlock, [2, 4, 12, 6], False, base_conv=base_conv, dropout_p=0.0, **kwargs)
+    return _nf_resnet('f1', BasicBlock, [2, 4, 12, 6], False, base_conv=base_conv, dropout_p=0.3, **kwargs)
+
+def nf_2(base_conv: nn.Conv2d = ScaledStdConv2d, **kwargs):
+    return _nf_resnet('f1', BasicBlock, [3, 6, 18, 9], False, base_conv=base_conv, dropout_p=0.4, **kwargs)
+
+def nf_3(base_conv: nn.Conv2d = ScaledStdConv2d, **kwargs):
+    return _nf_resnet('f1', BasicBlock, [4, 8, 24, 12], False, base_conv=base_conv, dropout_p=0.5, **kwargs)
+
+def nf_4(base_conv: nn.Conv2d = ScaledStdConv2d, **kwargs):
+    return _nf_resnet('f1', BasicBlock, [5, 10, 30, 15], False, base_conv=base_conv, dropout_p=0.5, **kwargs)
+
+def nf_5(base_conv: nn.Conv2d = ScaledStdConv2d, **kwargs):
+    return _nf_resnet('f1', BasicBlock, [6, 12, 36, 18], False, base_conv=base_conv, dropout_p=0.5, **kwargs)
+
+def nf_6(base_conv: nn.Conv2d = ScaledStdConv2d, **kwargs):
+    return _nf_resnet('f1', BasicBlock, [7, 14, 42, 21], False, base_conv=base_conv, dropout_p=0.5, **kwargs)

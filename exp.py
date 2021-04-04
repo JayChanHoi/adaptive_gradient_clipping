@@ -1,4 +1,4 @@
-from nfn.nfn import nf_0, nf_1, NF_RESO_CONFIG
+from nfn.nf_resnet_light import nf_0, nf_1, NF_RESO_CONFIG
 from models.nfnet import nfnet_f0, dm_nfnet_f0, nfnet_f1
 from efficient_net.efficient_net_model import ENClassifier, model_dict
 
