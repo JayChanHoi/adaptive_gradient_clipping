@@ -19,7 +19,7 @@ import torch.nn.functional as F
 
 from src.agc import AGC
 
-def train(model_name='v1_efficient_net_b0_agc'):
+def train(model_name='v1_nf_resnet_light_2_f0_agc'):
     if os.path.isdir('tensorboard/{}'.format(model_name)):
         shutil.rmtree('tensorboard/{}'.format(model_name))
         os.makedirs('tensorboard/{}'.format(model_name))
