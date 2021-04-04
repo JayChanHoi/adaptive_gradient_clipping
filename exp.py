@@ -31,7 +31,7 @@ def train(model_name='v1_nf_resnet_light_v2_f0_agc'):
 
         torchvision.transforms.RandomHorizontalFlip(),
         torchvision.transforms.RandomVerticalFlip(),
-        torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['train_reso']),
+        torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['reso']),
         # torchvision.transforms.Resize(int(model_dict['0'][0])),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
@@ -39,7 +39,7 @@ def train(model_name='v1_nf_resnet_light_v2_f0_agc'):
     ])
 
     test_transform = torchvision.transforms.Compose([
-        torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['inference_reso']),
+        torchvision.transforms.Resize(NF_RESO_CONFIG['nf_0']['reso']),
         # torchvision.transforms.Resize(int(model_dict['0'][0])),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Lambda(lambd=lambda x: x.repeat(3, 1, 1)),
